@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { WordDefinition } from '../types';
 
@@ -6,6 +7,14 @@ interface WordEntryProps {
 }
 
 const WordEntry: React.FC<WordEntryProps> = ({ entry }) => {
+  const getErrorMessage = (err?: string) => {
+    switch(err) {
+      case "MISSING_API_KEY": return "API Key missing in environment.";
+      case "INVALID_API_KEY": return "The provided API Key is invalid.";
+      default: return "I couldn't write this definition.";
+    }
+  };
+
   return (
     <div className="mb-0 relative group animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex items-baseline h-10 ml-2 md:ml-0">
@@ -22,9 +31,7 @@ const WordEntry: React.FC<WordEntryProps> = ({ entry }) => {
       <div className="ml-6 md:ml-8">
         {entry.error ? (
           <div className="text-red-400 text-lg font-hand h-10 flex items-center italic">
-            {entry.error === "MISSING_API_KEY" 
-              ? "API Key not found. Please set 'API_KEY' in Vercel Environment Variables." 
-              : "I couldn't write this definition."}
+            {getErrorMessage(entry.error)}
           </div>
         ) : (
           <>

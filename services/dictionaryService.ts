@@ -4,18 +4,11 @@ import { DefinitionResponse } from "../types";
 
 /**
  * fetchDefinition - Retrieves definitions from Gemini API.
- * Uses process.env.API_KEY which must be set in your Vercel/Environment settings.
+ * Follows strict guidelines to use process.env.API_KEY directly.
  */
 export const fetchDefinition = async (word: string): Promise<DefinitionResponse> => {
-  // Use the API_KEY environment variable name as required.
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey || apiKey === "your_gemini_api_key_here") {
-    console.error("API_KEY is missing. Ensure it is set as 'API_KEY' in your environment.");
-    throw new Error("MISSING_API_KEY");
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  // Use process.env.API_KEY directly as required by the environment configuration.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
     const response = await ai.models.generateContent({
@@ -38,12 +31,17 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
       },
     });
 
+    // Access .text property directly (not a method).
     const text = response.text;
     if (!text) throw new Error("EMPTY_RESPONSE");
 
     return JSON.parse(text) as DefinitionResponse;
   } catch (error: any) {
     console.error("Dictionary API Error:", error);
+    // Handle unauthorized specifically to help user diagnose bad keys
+    if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+      throw new Error("INVALID_API_KEY");
+    }
     throw error;
   }
 };
