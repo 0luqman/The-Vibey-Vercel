@@ -1,17 +1,17 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { DefinitionResponse } from "../types";
 
 /**
  * fetchDefinition - Retrieves definitions from Gemini API.
- * The API_KEY must be set in the environment (Vercel Dashboard or .env file).
+ * Uses process.env.API_KEY which must be set in your Vercel/Environment settings.
  */
 export const fetchDefinition = async (word: string): Promise<DefinitionResponse> => {
-  // Access the API key. 
-  // Note: On Vercel static sites, this must be available at runtime or injected.
+  // Use the API_KEY environment variable name as required.
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "your_gemini_api_key_here") {
-    console.error("API_KEY is missing or using placeholder. Please set API_KEY in your environment variables.");
+    console.error("API_KEY is missing. Ensure it is set as 'API_KEY' in your environment.");
     throw new Error("MISSING_API_KEY");
   }
 
@@ -20,9 +20,12 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Define the English word: "${word}".`,
+      contents: `Lookup the definition for: "${word}".`,
       config: {
-        systemInstruction: "You are a concise dictionary assistant. Respond ONLY with a JSON object. Provide a short English definition and a natural Urdu translation. { \"english\": \"definition\", \"urdu\": \"translation\" }",
+        systemInstruction: `You are a concise bilingual dictionary. 
+        - If the word is a valid English word, provide a definition (max 12 words) and a natural Urdu meaning.
+        - If the word is nonsensical, keyboard mashing, or junk, return: {"english": "Hmm, I couldn't find a standard definition for that.", "urdu": "یہ کوئی باقاعدہ لفظ معلوم نہیں ہوتا۔"}
+        - Always return valid JSON.`,
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -36,11 +39,11 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
     });
 
     const text = response.text;
-    if (!text) throw new Error("EMPTY_AI_RESPONSE");
+    if (!text) throw new Error("EMPTY_RESPONSE");
 
     return JSON.parse(text) as DefinitionResponse;
-  } catch (error) {
-    console.error("Dictionary Service Error:", error);
+  } catch (error: any) {
+    console.error("Dictionary API Error:", error);
     throw error;
   }
 };

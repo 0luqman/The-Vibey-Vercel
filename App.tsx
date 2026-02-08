@@ -54,11 +54,13 @@ const App: React.FC = () => {
             : entry
         )
       );
-    } catch (error) {
+    } catch (error: any) {
+      // Pass the actual error message (e.g., 'MISSING_API_KEY') so WordEntry can display the correct diagnostic message.
+      const errorMessage = error instanceof Error ? error.message : String(error);
       setEntries(prev => 
         prev.map(entry => 
           entry.id === newId 
-            ? { ...entry, isLoading: false, error: 'Failed to fetch definition' }
+            ? { ...entry, isLoading: false, error: errorMessage }
             : entry
         )
       );
