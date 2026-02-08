@@ -4,11 +4,18 @@ import { DefinitionResponse } from "../types";
 
 /**
  * fetchDefinition - Retrieves definitions from Gemini API.
- * Follows strict guidelines to use process.env.API_KEY directly.
+ * Prioritizes keys manually set by the user in the web UI.
  */
 export const fetchDefinition = async (word: string): Promise<DefinitionResponse> => {
-  // Use process.env.API_KEY directly as required by the environment configuration.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Check for a user-provided key in localStorage first
+  const userKey = localStorage.getItem('vibey_user_api_key');
+  const apiKey = userKey || process.env.API_KEY;
+
+  if (!apiKey || apiKey === "your_gemini_api_key_here") {
+    throw new Error("MISSING_API_KEY");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
@@ -31,15 +38,13 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
       },
     });
 
-    // Access .text property directly (not a method).
     const text = response.text;
     if (!text) throw new Error("EMPTY_RESPONSE");
 
     return JSON.parse(text) as DefinitionResponse;
   } catch (error: any) {
     console.error("Dictionary API Error:", error);
-    // Handle unauthorized specifically to help user diagnose bad keys
-    if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+    if (error.message?.includes('401') || error.message?.includes('API_KEY_INVALID')) {
       throw new Error("INVALID_API_KEY");
     }
     throw error;

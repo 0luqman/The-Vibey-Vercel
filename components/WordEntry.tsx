@@ -9,8 +9,8 @@ interface WordEntryProps {
 const WordEntry: React.FC<WordEntryProps> = ({ entry }) => {
   const getErrorMessage = (err?: string) => {
     switch(err) {
-      case "MISSING_API_KEY": return "API Key missing in environment.";
-      case "INVALID_API_KEY": return "The provided API Key is invalid.";
+      case "MISSING_API_KEY": return "API Key missing. Click 'SET API' to fix.";
+      case "INVALID_API_KEY": return "The API Key is invalid. Check 'SET API'.";
       default: return "I couldn't write this definition.";
     }
   };
