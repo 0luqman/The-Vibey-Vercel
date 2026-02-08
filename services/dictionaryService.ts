@@ -1,20 +1,11 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { DefinitionResponse } from "../types";
 
-const getClient = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    console.error("API Key not found in environment variables");
-    return null;
-  }
-  return new GoogleGenAI({ apiKey });
-};
-
+// The fetchDefinition function retrieves word definitions using the Gemini API.
 export const fetchDefinition = async (word: string): Promise<DefinitionResponse> => {
-  const ai = getClient();
-  if (!ai) {
-    throw new Error("API Key configuration error");
-  }
+  // Always initialize GoogleGenAI using the process.env.API_KEY directly.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
     const response = await ai.models.generateContent({
@@ -34,6 +25,7 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
       },
     });
 
+    // The simplest and most direct way to get the generated text content is by accessing the .text property.
     const text = response.text;
     if (!text) {
       throw new Error("Empty response from AI");

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Vibey Vercel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Shim process.env for browser compatibility
+      window.process = window.process || { env: {} };
+    </script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
       
@@ -17,7 +21,6 @@
         cursor: url('https://raw.githubusercontent.com/google/material-design-icons/master/png/editor/mode_edit/materialicons/24dp/1x/baseline_mode_edit_black_24dp.png'), auto;
       }
       
-      /* Notepad lined paper effect */
       .notepad-paper {
         background-color: #fff;
         background-image: 
@@ -39,7 +42,6 @@
         font-family: 'Noto Nastaliq Urdu', serif;
       }
 
-      /* Custom scrollbar for that notepad look */
       ::-webkit-scrollbar {
         width: 8px;
       }
@@ -54,24 +56,25 @@
         background: #9ca3af;
       }
 
-      /* Ink bleed effect simulation */
       .ink-text {
         filter: blur(0.2px);
         letter-spacing: 0.01em;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
-  }
-}
-</script>
-</head>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react-dom": "https://esm.sh/react-dom@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+      }
+    }
+    </script>
+  </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
   </body>
 </html>
