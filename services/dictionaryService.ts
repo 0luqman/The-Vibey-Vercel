@@ -1,18 +1,28 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { DefinitionResponse } from "../types";
 
-// The fetchDefinition function retrieves word definitions using the Gemini API.
+/**
+ * fetchDefinition - Retrieves definitions from Gemini API.
+ * The API_KEY must be set in the environment (Vercel Dashboard or .env file).
+ */
 export const fetchDefinition = async (word: string): Promise<DefinitionResponse> => {
-  // Always initialize GoogleGenAI using the process.env.API_KEY directly.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Access the API key. 
+  // Note: On Vercel static sites, this must be available at runtime or injected.
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey || apiKey === "your_gemini_api_key_here") {
+    console.error("API_KEY is missing or using placeholder. Please set API_KEY in your environment variables.");
+    throw new Error("MISSING_API_KEY");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Provide the definition for the word: "${word}".`,
+      contents: `Define the English word: "${word}".`,
       config: {
-        systemInstruction: "You are a concise dictionary helper. Always return the output in JSON format containing the 'english' definition (short and clear) and the 'urdu' translation/meaning. Keep the English definition under 20 words.",
+        systemInstruction: "You are a concise dictionary assistant. Respond ONLY with a JSON object. Provide a short English definition and a natural Urdu translation. { \"english\": \"definition\", \"urdu\": \"translation\" }",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -25,16 +35,12 @@ export const fetchDefinition = async (word: string): Promise<DefinitionResponse>
       },
     });
 
-    // The simplest and most direct way to get the generated text content is by accessing the .text property.
     const text = response.text;
-    if (!text) {
-      throw new Error("Empty response from AI");
-    }
+    if (!text) throw new Error("EMPTY_AI_RESPONSE");
 
-    const data = JSON.parse(text) as DefinitionResponse;
-    return data;
+    return JSON.parse(text) as DefinitionResponse;
   } catch (error) {
-    console.error("Error fetching definition:", error);
+    console.error("Dictionary Service Error:", error);
     throw error;
   }
 };

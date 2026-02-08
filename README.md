@@ -1,21 +1,20 @@
 # The Vibey Vercel 📝
 
-A minimal, aesthetic notepad-style study tool that helps you learn new vocabulary instantly. Built with React and powered by the Google Gemini API.
+A minimal, aesthetic notepad-style study tool.
 
-## Features
-- **Instant Definitions:** Type an English word and hit `Space`. The app automatically fetches its English definition and Urdu translation.
-- **Notepad Aesthetic:** A clean, lined-paper UI designed for focus and a "vibey" study experience.
-- **AI-Powered:** Uses `gemini-3-flash-preview` for fast, accurate linguistic assistance.
+## Environment Setup
+The app requires an API key from Google AI Studio.
 
-## How to Use
-1. Start typing any English word in the notepad.
-2. Press the **Space** key.
-3. Watch as the app provides a concise English definition and its Urdu counterpart.
+1.  **Local Development:** Rename `example.env` to `.env` and add your key.
+2.  **Vercel Deployment:** 
+    - Go to your Project Settings.
+    - Navigate to **Environment Variables**.
+    - Add a new variable: 
+        - **Key:** `API_KEY`
+        - **Value:** `YOUR_GEMINI_API_KEY`
+    - **Note:** For static sites, ensure your build tool (if any) is configured to expose these variables to the browser.
 
 ## Tech Stack
-- **Frontend:** React, Tailwind CSS
-- **AI Integration:** `@google/genai` (Gemini API)
-- **Styling:** Custom "Notepad Paper" CSS effects
-
-## Getting Started
-Ensure you have an environment variable `API_KEY` set with your Google Gemini API key.
+- React
+- Tailwind CSS
+- Gemini AI (`gemini-3-flash-preview`)
