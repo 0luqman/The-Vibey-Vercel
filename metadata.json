@@ -1,0 +1,5 @@
+{
+  "name": "The Vibey Vercel",
+  "description": "A minimal notepad study tool that automatically fetches definitions.",
+  "requestFramePermissions": []
+}
